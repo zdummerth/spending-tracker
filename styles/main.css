@@ -16,7 +16,7 @@ html {
   height: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
-  font-feature-settings: 'case' 1, 'rlig' 1, 'calt' 0;
+  font-feature-settings: 'rlig' 1, 'calt' 0;
 }
 
 html,
@@ -49,4 +49,9 @@ a {
 
 .height-screen-helper {
   height: calc(100vh - 80px);
+}
+
+p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }

@@ -68,3 +68,15 @@ export interface Subscription {
   trial_end?: string;
   prices?: Price;
 }
+
+export interface Post {
+  id: string /* primary key */;
+  name?: string;
+  image?: string;
+  author?: string;
+  markdown_file?: string;
+  image_citation?: string;
+  imageUrl: string;
+  handle: string
+  html: string
+}

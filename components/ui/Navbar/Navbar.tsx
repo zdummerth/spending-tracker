@@ -30,6 +30,12 @@ const Navbar = () => {
               <Link href="/account">
                 <a className={s.link}>Account</a>
               </Link>
+              <Link href="/member-home">
+                <a className={s.link}>Home</a>
+              </Link>
+              <Link href="/blog">
+                <a className={s.link}>Blog</a>
+              </Link>
             </nav>
           </div>
 
