@@ -42,7 +42,7 @@ export const getServerSideProps = withPageAuth({
         .select('*')
         .eq('handle', ctx.params?.handle);
 
-      if (error) {
+      if (error || !posts) {
         throw 'Error Fetching Post';
       }
 
