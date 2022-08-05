@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { useState, ReactNode } from 'react';
-
+import { useState, ReactNode, FormEventHandler } from 'react';
+import UpdateUsernameForm from '@/components/UpdateUsernameForm';
 import LoadingDots from 'components/ui/LoadingDots';
 import Button from 'components/ui/Button';
 import { useUser } from 'utils/useUser';
@@ -34,7 +34,7 @@ export const getServerSideProps = withAuthRequired({ redirectTo: '/signin' });
 
 export default function Account({ user }: { user: User }) {
   const [loading, setLoading] = useState(false);
-  const { isLoading, subscription, userDetails } = useUser();
+  const { isLoading, subscription, userDetails, updateUsername } = useUser();
 
   const redirectToCustomerPortal = async () => {
     setLoading(true);
@@ -112,12 +112,16 @@ export default function Account({ user }: { user: User }) {
           description="Please enter your full name, or a display name you are comfortable with."
           footer={<p>Please use 64 characters at maximum.</p>}
         >
-          <div className="text-xl mt-8 mb-4 font-semibold">
+          <div className="text-xl font-semibold">
             {userDetails ? (
-              `${
-                userDetails.full_name ??
-                `${userDetails.first_name} ${userDetails.last_name}`
-              }`
+              <div>
+                <UpdateUsernameForm
+                  defaultUsername={
+                    userDetails?.full_name ? userDetails.full_name : ''
+                  }
+                  onSubmit={updateUsername}
+                />
+              </div>
             ) : (
               <div className="h-8 mb-6">
                 <LoadingDots />
@@ -125,11 +129,7 @@ export default function Account({ user }: { user: User }) {
             )}
           </div>
         </Card>
-        <Card
-          title="Your Email"
-          description="Please enter the email address you want to use to login."
-          footer={<p>We will email you to verify the change.</p>}
-        >
+        <Card title="Your Email">
           <p className="text-xl mt-8 mb-4 font-semibold">
             {user ? user.email : undefined}
           </p>

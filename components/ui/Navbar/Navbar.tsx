@@ -3,7 +3,6 @@ import s from './Navbar.module.css';
 
 import Logo from 'components/icons/Logo';
 import { useUser } from 'utils/useUser';
-import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
@@ -23,29 +22,26 @@ const Navbar = () => {
                 <Logo />
               </a>
             </Link>
-            <nav className="space-x-2 ml-6 hidden lg:block">
-              <Link href="/">
-                <a className={s.link}>Pricing</a>
+            <nav className="flex-1 space-x-2 ml-6">
+              <Link href="/public-blog">
+                <a className={s.link}>Blog</a>
               </Link>
               <Link href="/account">
                 <a className={s.link}>Account</a>
               </Link>
               <Link href="/blog">
-                <a className={s.link}>Blog</a>
+                <a className={s.link}>Members</a>
               </Link>
+              {user ? (
+                <Link href="/api/auth/logout">
+                  <a className={s.link}>Sign out</a>
+                </Link>
+              ) : (
+                <Link href="/signin">
+                  <a className={s.link}>Sign in</a>
+                </Link>
+              )}
             </nav>
-          </div>
-
-          <div className="flex flex-1 justify-end space-x-8">
-            {user ? (
-              <Link href="/api/auth/logout">
-                <a className={s.link}>Sign out</a>
-              </Link>
-            ) : (
-              <Link href="/signin">
-                <a className={s.link}>Sign in</a>
-              </Link>
-            )}
           </div>
         </div>
       </div>

@@ -6,6 +6,8 @@ import {
 import { UserDetails } from 'types';
 import { Subscription } from 'types';
 import { SupabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
+import { postData } from 'utils/helpers';
+import { updateUserName as updateUsernameDB } from 'utils/supabase-client';
 
 type UserContextType = {
   accessToken: string | null;
@@ -13,6 +15,7 @@ type UserContextType = {
   userDetails: UserDetails | null;
   isLoading: boolean;
   subscription: Subscription | null;
+  updateUsername(username: string): any;
 };
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -63,13 +66,23 @@ export const MyUserContextProvider = (props: Props) => {
     }
   }, [user, isLoadingUser]);
 
+  const updateUsername = async (username: string) => {
+    const data = await updateUsernameDB(user?.id ? user.id : '', username);
+    setUserDetails({
+      ...userDetails,
+      ...data
+    });
+    console.log('user update response: ', data);
+  };
+
   const value = {
     accessToken,
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
     subscription,
-    supabase
+    supabase,
+    updateUsername
   };
 
   return <UserContext.Provider value={value} {...props} />;

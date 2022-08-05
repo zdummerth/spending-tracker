@@ -5,14 +5,14 @@ import BlogList from '@/components/BlogList';
 
 export default function ProtectedPage({ data }: { data: Post[] }) {
   console.log(data);
-  return <BlogList data={data} isMember={true} />;
+  return <BlogList data={data} isMember={false} />;
 }
 
 export const getServerSideProps = withPageAuth({
   redirectTo: '/',
   async getServerSideProps(ctx) {
     try {
-      const posts = await getBlogPostsWithImage(ctx, true);
+      const posts = await getBlogPostsWithImage(ctx, false);
       return { props: { data: posts } };
     } catch (e) {
       console.log('error: ', e);

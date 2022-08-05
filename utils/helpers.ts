@@ -3,8 +3,8 @@ import { Price } from 'types';
 export const getURL = () => {
   const url =
     process?.env?.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : process?.env?.URL && process.env.URL !== ''
+      ? 'http://localhost:3000'
+      : process?.env?.URL && process.env.URL !== ''
       ? process.env.URL
       : process?.env?.VERCEL_URL && process.env.VERCEL_URL !== ''
       ? process.env.VERCEL_URL
@@ -18,7 +18,7 @@ export const postData = async ({
   data
 }: {
   url: string;
-  data?: { price: Price };
+  data?: { price?: Price; username?: string };
 }) => {
   console.log('posting,', url, data);
 
