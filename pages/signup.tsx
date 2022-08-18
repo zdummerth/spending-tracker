@@ -36,7 +36,7 @@ const SignUp = () => {
       setMessage({ type: 'error', content: error.message });
     } else {
       if (createdUser) {
-        await updateUserName(createdUser, name);
+        await updateUserName(createdUser.id, name);
         setNewUser(createdUser);
       } else {
         setMessage({

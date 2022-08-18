@@ -1,10 +1,7 @@
-import Link from 'next/link';
-import { useState, ReactNode, FormEventHandler } from 'react';
+import { useState, ReactNode } from 'react';
 import UpdateUsernameForm from '@/components/UpdateUsernameForm';
 import LoadingDots from 'components/ui/LoadingDots';
-import Button from 'components/ui/Button';
 import { useUser } from 'utils/useUser';
-import { postData } from 'utils/helpers';
 
 import { withAuthRequired, User } from '@supabase/supabase-auth-helpers/nextjs';
 
@@ -34,28 +31,7 @@ export const getServerSideProps = withAuthRequired({ redirectTo: '/signin' });
 
 export default function Account({ user }: { user: User }) {
   const [loading, setLoading] = useState(false);
-  const { isLoading, subscription, userDetails, updateUsername } = useUser();
-
-  const redirectToCustomerPortal = async () => {
-    setLoading(true);
-    try {
-      const { url, error } = await postData({
-        url: '/api/create-portal-link'
-      });
-      window.location.assign(url);
-    } catch (error) {
-      if (error) return alert((error as Error).message);
-    }
-    setLoading(false);
-  };
-
-  const subscriptionPrice =
-    subscription &&
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: subscription?.prices?.currency,
-      minimumFractionDigits: 0
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+  const { isLoading, userDetails, updateUsername } = useUser();
 
   return (
     <section className="bg-black mb-32">
@@ -64,49 +40,9 @@ export default function Account({ user }: { user: User }) {
           <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
             Account
           </h1>
-          <p className="mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl max-w-2xl m-auto">
-            We partnered with Stripe for a simplified billing.
-          </p>
         </div>
       </div>
       <div className="p-4">
-        <Card
-          title="Your Plan"
-          description={
-            subscription
-              ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
-              : ''
-          }
-          footer={
-            <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
-              <p className="pb-4 sm:pb-0">
-                Manage your subscription on Stripe.
-              </p>
-              <Button
-                variant="slim"
-                loading={loading}
-                disabled={loading || !subscription}
-                onClick={redirectToCustomerPortal}
-              >
-                Open customer portal
-              </Button>
-            </div>
-          }
-        >
-          <div className="text-xl mt-8 mb-4 font-semibold">
-            {isLoading ? (
-              <div className="h-12 mb-6">
-                <LoadingDots />
-              </div>
-            ) : subscription ? (
-              `${subscriptionPrice}/${subscription?.prices?.interval}`
-            ) : (
-              <Link href="/">
-                <a>Choose your plan</a>
-              </Link>
-            )}
-          </div>
-        </Card>
         <Card
           title="Your Name"
           description="Please enter your full name, or a display name you are comfortable with."
@@ -117,7 +53,7 @@ export default function Account({ user }: { user: User }) {
               <div>
                 <UpdateUsernameForm
                   defaultUsername={
-                    userDetails?.full_name ? userDetails.full_name : ''
+                    userDetails?.username ? userDetails.username : ''
                   }
                   onSubmit={updateUsername}
                 />

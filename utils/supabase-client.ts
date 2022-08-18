@@ -1,36 +1,20 @@
-import {
-  supabaseClient,
-  supabaseServerClient,
-  User
-} from '@supabase/supabase-auth-helpers/nextjs';
-import { ProductWithPrice, UserDetails } from 'types';
+import { supabaseClient, User } from '@supabase/supabase-auth-helpers/nextjs';
+import { UserDetails, Transaction } from 'types';
+import { createClient } from '@supabase/supabase-js';
+
+// Create a single supabase client for interacting with your database
+const supabaseAdmin = createClient(
+  'https://xyzcompany.supabase.co',
+  'public-anon-key'
+);
 
 export const supabase = supabaseClient;
-
-export const getActiveProductsWithPrices = async (): Promise<
-  ProductWithPrice[]
-> => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, prices(*)')
-    .eq('active', true)
-    .eq('prices.active', true)
-    .order('metadata->index')
-    .order('unit_amount', { foreignTable: 'prices' });
-
-  if (error) {
-    console.log(error.message);
-    throw error;
-  }
-
-  return data || [];
-};
 
 export const updateUserName = async (userId: string, name: string) => {
   const { data, error } = await supabase
     .from<UserDetails>('users')
     .update({
-      full_name: name
+      username: name
     })
     .eq('id', userId)
     .limit(1)
@@ -45,34 +29,44 @@ export const updateUserName = async (userId: string, name: string) => {
   return data || {};
 };
 
-export const getBlogPostsWithImage = async (ctx: any, isMember: Boolean) => {
-  const table = isMember ? 'blog_post' : 'public_blog_post';
-  const { data: posts, error } = await supabaseServerClient(ctx)
-    .from(table)
-    .select('*');
+export const updateTransaction = async (payload: Transaction, id: string) => {
+  const { data, error } = await supabase
+    .from<Transaction>('transactions')
+    .update(payload)
+    .eq('id', id)
+    .limit(1)
+    .order('id', { ascending: false })
+    .single();
 
   if (error) {
     console.log(error.message);
     throw error;
   }
 
-  const postArray = posts ? posts : [];
+  return data || {};
+};
 
-  const postsWithImageUrl = postArray.map((post) => {
-    const { publicURL, error: urlErr } = supabaseServerClient(ctx)
-      .storage.from('public-images')
-      .getPublicUrl(post.image);
+interface ListTransactionsProps {
+  select: string;
+  limit: number;
+  startingDate?: Date;
+  endingDate?: Date;
+  income_or_expense: string;
+  isPublic: boolean;
+}
+export const listTransactions = async (props: ListTransactionsProps) => {
+  let query = supabase
+    .from<Transaction>('transactions')
+    .select(props.select)
+    .limit(props.limit)
+    .rangeLte('created_at', `[${props.startingDate}, ${props.endingDate}]`);
 
-    if (urlErr) {
-      console.log(urlErr.message);
-      throw urlErr;
-    }
+  const { data, error } = await query;
 
-    return {
-      ...post,
-      imageUrl: publicURL
-    };
-  });
+  if (error) {
+    console.log(error.message);
+    throw error;
+  }
 
-  return postsWithImageUrl || [];
+  return data || {};
 };

@@ -2,9 +2,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import Navbar from 'components/ui/Navbar';
-import Footer from 'components/ui/Footer';
 import { ReactNode } from 'react';
 import { PageMeta } from '../types';
+import { useAppState } from '@/utils/useAppState';
 
 interface Props {
   children: ReactNode;
@@ -12,6 +12,7 @@ interface Props {
 }
 
 export default function Layout({ children, meta: pageMeta }: Props) {
+  const { endingDate, startingDate } = useAppState();
   const router = useRouter();
   const meta = {
     title: 'Next.js Subscription Starter',
@@ -42,9 +43,14 @@ export default function Layout({ children, meta: pageMeta }: Props) {
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.cardImage} />
       </Head>
+      <main
+        id="skip"
+        style={{ minHeight: 'calc(100vh - 64px)' }}
+        className="min-h-screen bg-zinc-900 mb-20"
+      >
+        {children}
+      </main>
       <Navbar />
-      <main id="skip">{children}</main>
-      <Footer />
     </>
   );
 }

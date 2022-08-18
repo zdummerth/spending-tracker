@@ -4,7 +4,6 @@ import {
   User
 } from '@supabase/supabase-auth-helpers/react';
 import { UserDetails } from 'types';
-import { Subscription } from 'types';
 import { SupabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
 import { postData } from 'utils/helpers';
 import { updateUserName as updateUsernameDB } from 'utils/supabase-client';
@@ -14,7 +13,6 @@ type UserContextType = {
   user: User | null;
   userDetails: UserDetails | null;
   isLoading: boolean;
-  subscription: Subscription | null;
   updateUsername(username: string): any;
 };
 
@@ -32,37 +30,23 @@ export const MyUserContextProvider = (props: Props) => {
   const { user, accessToken, isLoading: isLoadingUser } = useSupaUser();
   const [isLoadingData, setIsloadingData] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   const getUserDetails = () =>
     supabase.from<UserDetails>('users').select('*').single();
-  const getSubscription = () =>
-    supabase
-      .from<Subscription>('subscriptions')
-      .select('*, prices(*, products(*))')
-      .in('status', ['trialing', 'active'])
-      .single();
 
   useEffect(() => {
-    if (user && !isLoadingData && !userDetails && !subscription) {
+    if (user && !isLoadingData && !userDetails) {
       setIsloadingData(true);
-      Promise.allSettled([getUserDetails(), getSubscription()]).then(
-        (results) => {
-          const userDetailsPromise = results[0];
-          const subscriptionPromise = results[1];
+      Promise.allSettled([getUserDetails()]).then((results) => {
+        const userDetailsPromise = results[0];
 
-          if (userDetailsPromise.status === 'fulfilled')
-            setUserDetails(userDetailsPromise.value.data);
+        if (userDetailsPromise.status === 'fulfilled')
+          setUserDetails(userDetailsPromise.value.data);
 
-          if (subscriptionPromise.status === 'fulfilled')
-            setSubscription(subscriptionPromise.value.data);
-
-          setIsloadingData(false);
-        }
-      );
+        setIsloadingData(false);
+      });
     } else if (!user && !isLoadingUser && !isLoadingData) {
       setUserDetails(null);
-      setSubscription(null);
     }
   }, [user, isLoadingUser]);
 
@@ -80,7 +64,6 @@ export const MyUserContextProvider = (props: Props) => {
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
-    subscription,
     supabase,
     updateUsername
   };

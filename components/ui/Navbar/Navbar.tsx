@@ -10,7 +10,7 @@ const Navbar = () => {
   const router = useRouter();
 
   return (
-    <nav className={s.root}>
+    <nav className="fixed bg-black w-full bottom-0">
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
@@ -23,14 +23,11 @@ const Navbar = () => {
               </a>
             </Link>
             <nav className="flex-1 space-x-2 ml-6">
-              <Link href="/public-blog">
-                <a className={s.link}>Blog</a>
+              <Link href="/demo">
+                <a className={s.link}>Demo</a>
               </Link>
               <Link href="/account">
                 <a className={s.link}>Account</a>
-              </Link>
-              <Link href="/blog">
-                <a className={s.link}>Members</a>
               </Link>
               {user ? (
                 <Link href="/api/auth/logout">
