@@ -29,6 +29,9 @@ const Navbar = () => {
               <Link href="/account">
                 <a className={s.link}>Account</a>
               </Link>
+              <Link href="/create-transaction">
+                <a className={s.link}>New Transaction</a>
+              </Link>
               {user ? (
                 <Link href="/api/auth/logout">
                   <a className={s.link}>Sign out</a>

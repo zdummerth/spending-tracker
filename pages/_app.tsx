@@ -2,7 +2,6 @@ import 'styles/main.css';
 import 'styles/chrome-bug.css';
 import { useEffect } from 'react';
 import React from 'react';
-
 import Layout from 'components/Layout';
 import { UserProvider } from '@supabase/supabase-auth-helpers/react';
 import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs';

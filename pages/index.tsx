@@ -1,17 +1,5 @@
-// import { getActiveProductsWithPrices } from 'utils/supabase-client';
-import { withPageAuth } from '@supabase/auth-helpers-nextjs';
-// import { Product, Post } from 'types';
-
-// interface Props {
-//   products: Product[];
-//   posts: Post[];
-// }
-
-// export default function PricingPage({ products, posts }: Props) {
-//   return <div>Spending Tracker</div>;
-// }
-
-export default function PricingPage() {
+export default function PricingPage(props: any) {
+  console.log('cats: ', props.categories);
   return (
     <div>
       <h1>Spending Tracker</h1>

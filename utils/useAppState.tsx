@@ -10,6 +10,7 @@ type AppContextType = {
   openMenu(): any;
   closeMenu(): any;
   toggleMenu(): any;
+  setEndingDateToNow(): any;
   dateRangeDispatch(range: string): any;
 };
 
@@ -18,11 +19,9 @@ const AppStateContext = React.createContext<AppContextType | undefined>(
 );
 
 export const AppStateContextProvider = ({ children }: { children: any }) => {
-  const getPreviousSunday = (date = new Date()) => {
-    const previousMonday = new Date();
-    previousMonday.setDate(date.getDate() - date.getDay());
-    return previousMonday;
-  };
+  const getPreviousSunday = (date = new Date()) =>
+    new Date(date.getDate() - date.getDay());
+
   const getFirstOfMonth = (date = new Date()) =>
     new Date(date.getFullYear(), date.getMonth(), 1);
 
@@ -58,6 +57,7 @@ export const AppStateContextProvider = ({ children }: { children: any }) => {
         break;
       default:
         dateFunction(getPreviousSunday, 'this-week');
+        break;
     }
   };
 
@@ -72,13 +72,19 @@ export const AppStateContextProvider = ({ children }: { children: any }) => {
       isCartOpen: false
     });
 
+  const setEndingDateToNow = () =>
+    setAppState({
+      ...appState,
+      endingDate: new Date()
+    });
+
   // const router = useRouter();
 
   // useEffect(() => {
-  //   router.events.on('routeChangeComplete', close);
+  //   router.events.on('routeChangeComplete', mutate);
 
   //   return () => {
-  //     router.events.off('routeChangeComplete', close);
+  //     router.events.off('routeChangeComplete', mutate);
   //   };
   // }, []);
 
@@ -92,6 +98,7 @@ export const AppStateContextProvider = ({ children }: { children: any }) => {
         closeMenu: close,
         toggleMenu,
         dateRangeDispatch,
+        setEndingDateToNow,
         startingDate: appState.startingDate,
         endingDate: appState.endingDate
       }}

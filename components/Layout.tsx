@@ -5,6 +5,8 @@ import Navbar from 'components/ui/Navbar';
 import { ReactNode } from 'react';
 import { PageMeta } from '../types';
 import { useAppState } from '@/utils/useAppState';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Props {
   children: ReactNode;
@@ -12,11 +14,10 @@ interface Props {
 }
 
 export default function Layout({ children, meta: pageMeta }: Props) {
-  const { endingDate, startingDate } = useAppState();
   const router = useRouter();
   const meta = {
-    title: 'Next.js Subscription Starter',
-    description: 'Brought to you by Vercel, Stripe, and Supabase.',
+    title: 'Spending Tracker',
+    description: 'A basic budget app',
     cardImage: '/og.png',
     ...pageMeta
   };
@@ -43,6 +44,12 @@ export default function Layout({ children, meta: pageMeta }: Props) {
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.cardImage} />
       </Head>
+      <ToastContainer
+        position="top-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        theme="dark"
+      />
       <main
         id="skip"
         style={{ minHeight: 'calc(100vh - 64px)' }}

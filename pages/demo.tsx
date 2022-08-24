@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { withPageAuth } from '@supabase/auth-helpers-nextjs';
+import LoadingDots from '@/components/ui/LoadingDots';
 import useDemoData from '@/utils/useDemoData';
 import { VictoryPie, VictoryTooltip, VictoryLabel } from 'victory';
 import Price from '@/components/Price';
-import { useAppState } from '@/utils/useAppState';
 import Link from 'next/link';
 import DatePicker from '@/components/DatePicker';
 // import SeedDatabase from '@/components/SeedDatabase';
@@ -11,10 +11,7 @@ import DatePicker from '@/components/DatePicker';
 export default function DemoPage() {
   const [transactionType, setTransactionType] = useState('expense');
   const [sumAscending, setSumAscending] = useState(false);
-  const { startingDate, endingDate } = useAppState();
   const { data, error, loading } = useDemoData({
-    startingDate,
-    endingDate,
     sumAscending,
     action: 'get_all_category_data'
   });
@@ -54,7 +51,9 @@ export default function DemoPage() {
       </div>
       <h1 className="mt-4 mb-4">Demo Spending Tracker</h1>
       {loading ? (
-        <div>...loading data</div>
+        <div>
+          <LoadingDots />
+        </div>
       ) : (
         <>
           {/* <SeedDatabase /> */}

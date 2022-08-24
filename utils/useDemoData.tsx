@@ -2,33 +2,21 @@ import useSWR from 'swr';
 import { useAppState } from './useAppState';
 
 export default function useDemoData({
-  startingDate,
-  endingDate,
-  sumAscending,
-  categoryName,
-  categoryId,
+  sumAscending = true,
+  categoryName = 'food',
+  categoryId = 1,
   action
 }: {
-  startingDate: Date;
-  endingDate: Date;
   sumAscending?: Boolean;
   categoryName?: string;
   categoryId?: number;
-  action?: string;
+  action: string;
 }) {
   const url = '/api/get-demo-data';
-  // const { endingDate: estate, startingDate: sstate } = useAppState();
+  const { endingDate, startingDate } = useAppState();
 
   const { data, error } = useSWR(
-    [
-      url,
-      startingDate,
-      endingDate,
-      sumAscending,
-      categoryName,
-      categoryId,
-      action
-    ],
+    [action, startingDate, endingDate, sumAscending, categoryName, categoryId],
     async () => {
       const response = await fetch(url, {
         method: 'POST',
@@ -44,9 +32,15 @@ export default function useDemoData({
           action
         })
       });
-      return await response.json();
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return response.json();
     }
   );
 
+  // console.log('is fetching: ', isFetching);
   return { data, error, loading: !data && !error };
 }

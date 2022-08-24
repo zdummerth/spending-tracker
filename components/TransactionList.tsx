@@ -1,6 +1,5 @@
 import useDemoData from '@/utils/useDemoData';
 import Price from './Price';
-import { useAppState } from '@/utils/useAppState';
 import FormattedDate from './FormattedDate';
 
 export default function TransactionList({
@@ -10,14 +9,11 @@ export default function TransactionList({
   categoryName?: string;
   categoryId?: number;
 }) {
-  const { startingDate, endingDate } = useAppState();
-
   // console.log('cat id', categoryId);
   const { data, error, loading } = useDemoData({
-    startingDate,
-    endingDate,
     // categoryName,
-    categoryId
+    categoryId,
+    action: 'get_transactions_by_category'
   });
   if (error) {
     return <div>Error fetching category data</div>;
