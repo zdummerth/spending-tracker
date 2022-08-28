@@ -1,14 +1,8 @@
-import { Price } from 'types';
-
 export const getURL = () => {
   const url =
     process?.env?.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : process?.env?.URL && process.env.URL !== ''
-      ? process.env.URL
-      : process?.env?.VERCEL_URL && process.env.VERCEL_URL !== ''
-      ? process.env.VERCEL_URL
-      : 'http://localhost:3000';
+      ? 'http://localhost:3000/dashboard'
+      : 'http://localhost:3000/dashboard';
 
   return url.includes('http') ? url : `https://${url}`;
 };
@@ -18,7 +12,7 @@ export const postData = async ({
   data
 }: {
   url: string;
-  data?: { price?: Price; username?: string };
+  data?: { price?: number; username?: string };
 }) => {
   console.log('posting,', url, data);
 

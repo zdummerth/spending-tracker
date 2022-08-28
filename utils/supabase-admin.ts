@@ -33,18 +33,3 @@ export const listPublicTransactions = async (props: ListTransactionsProps) => {
 
   return data || {};
 };
-
-export const createDemoData = async () => {
-  // let query = supabaseAdmin
-  //   .from<Transaction>('transactions')
-  //   .select(props.select)
-  //   .limit(props.limit)
-  //   .rangeLte('created_at', `[${props.startingDate}, ${props.endingDate}]`);
-  // const { data, error } = await query;
-  // if (error) {
-  //   console.log(error.message);
-  //   throw error;
-  // }
-  // return data || {};
-  console.log('creating demo data');
-};

@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { useAppState } from './useAppState';
+import { useUser } from '@supabase/supabase-auth-helpers/react';
 
 export default function useDemoData({
   sumAscending = true,
@@ -11,13 +12,31 @@ export default function useDemoData({
   categoryName?: string;
   categoryId?: number;
   action: string;
+  // isDemo?: boolean;
 }) {
-  const url = '/api/get-demo-data';
+  const { user, isLoading, error: userErr } = useUser();
+  const shouldFetch = !isLoading && !userErr;
+  const isDemo = !user && shouldFetch;
+  const url = isDemo ? '/api/get-demo-data' : '/api/get-private-data';
+
   const { endingDate, startingDate } = useAppState();
 
   const { data, error } = useSWR(
-    [action, startingDate, endingDate, sumAscending, categoryName, categoryId],
+    shouldFetch
+      ? [
+          url,
+          action,
+          startingDate,
+          endingDate,
+          sumAscending,
+          categoryName,
+          categoryId,
+          isDemo
+        ]
+      : null,
     async () => {
+      console.log('data url: ', url);
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -29,7 +48,8 @@ export default function useDemoData({
           sumAscending,
           categoryName,
           categoryId,
-          action
+          action,
+          isDemo
         })
       });
 
@@ -41,6 +61,10 @@ export default function useDemoData({
     }
   );
 
-  // console.log('is fetching: ', isFetching);
-  return { data, error, loading: !data && !error };
+  return {
+    data,
+    error: error || userErr,
+    loading: (!data && !error) || isLoading,
+    isDemo
+  };
 }

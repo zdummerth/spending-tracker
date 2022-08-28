@@ -29,9 +29,8 @@ const SignIn = () => {
 
     setLoading(true);
     setMessage({});
-    const url = getURL()
-    console.log('redirect url: ', url)
-
+    const url = getURL();
+    console.log('redirect url: ', url);
 
     const { error } = await supabaseClient.auth.signIn(
       { email, password },

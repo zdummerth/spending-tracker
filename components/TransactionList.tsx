@@ -3,15 +3,11 @@ import Price from './Price';
 import FormattedDate from './FormattedDate';
 
 export default function TransactionList({
-  categoryName,
   categoryId
 }: {
-  categoryName?: string;
   categoryId?: number;
 }) {
-  // console.log('cat id', categoryId);
   const { data, error, loading } = useDemoData({
-    // categoryName,
     categoryId,
     action: 'get_transactions_by_category'
   });
@@ -24,7 +20,6 @@ export default function TransactionList({
 
   const transactions = data.data;
 
-  // console.log({ transactions });
   return (
     <>
       <div>

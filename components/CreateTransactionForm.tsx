@@ -1,6 +1,6 @@
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
+import { useUser } from '@supabase/supabase-auth-helpers/react';
 import isCurrency from 'validator/lib/isCurrency';
 import LoadingDots from 'components/ui/LoadingDots';
 import useDemoData from 'utils/useDemoData';
@@ -32,10 +32,12 @@ interface State {
 
 const CategorySelect = ({
   onChange,
-  currentCategory
+  currentCategory,
+  user
 }: {
   onChange: any;
   currentCategory: any;
+  user: any;
 }) => {
   const { data, error, loading } = useDemoData({
     action: 'get_all_category_names'
@@ -47,6 +49,12 @@ const CategorySelect = ({
     if (!cat) return;
     onChange(cat);
   };
+
+  useEffect(() => {
+    if (data?.data) {
+      onChange(data.data[0]);
+    }
+  }, [data]);
 
   if (loading) {
     return <LoadingDots />;
@@ -69,6 +77,7 @@ const CategorySelect = ({
         className="bg-slate-900 mt-2 p-2"
         onChange={handleChange}
         value={currentCategory.name}
+        disabled={!currentCategory.name}
       >
         {data.data.map((cat: any) => {
           return (
@@ -108,13 +117,15 @@ export default function CreateTransactionForm({
     error: false,
     amount: '',
     category: {
-      name: 'food',
+      name: '',
       income_or_expense: 'expense',
-      id: 1
+      id: 0
     }
   });
 
   const { setEndingDateToNow } = useAppState();
+
+  const { user, isLoading, error } = useUser();
 
   const createTransaction = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -126,9 +137,15 @@ export default function CreateTransactionForm({
       return Math.round(parseFloat(state.amount) * 100);
     };
     dispatch({ type: ActionType.SET_LOADING });
+    const url =
+      !user && !isLoading && !error
+        ? '/api/create-transaction'
+        : '/api/create-private-transaction';
+
+    console.log('post url: ', url);
     try {
       const verifiedAmount = verifyAmount();
-      const response = await fetch('/api/create-transaction', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'content-type': 'application/json'
@@ -167,6 +184,7 @@ export default function CreateTransactionForm({
                 dispatch({ type: ActionType.SET_CATEGORY, payload: category })
               }
               currentCategory={state.category}
+              user={user}
             />
             <label htmlFor="username" className="block mt-2">
               Amount

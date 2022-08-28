@@ -1,9 +1,13 @@
-import { supabaseAdmin } from '@/utils/supabase-admin';
-import { SupabaseClient } from '@supabase/auth-helpers-nextjs';
+import {
+  withApiAuth,
+  supabaseServerClient
+} from '@supabase/auth-helpers-nextjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // console.log('get demo data function: ', req.body);
+export default withApiAuth(async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const action = req.body.action;
   console.log('action: ', action);
 
@@ -12,33 +16,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (action) {
       case 'get_category_data':
-        response = await supabaseAdmin.rpc('get_category_data', {
-          categoryid: req.body.categoryId,
-          startingdate: req.body.startingDate,
-          endingdate: req.body.endingDate,
-          isdemo: true
-        });
+        response = await supabaseServerClient({ req, res }).rpc(
+          'get_category_data',
+          {
+            categoryid: req.body.categoryId,
+            startingdate: req.body.startingDate,
+            endingdate: req.body.endingDate,
+            isdemo: false
+          }
+        );
         break;
 
       case 'get_all_category_data':
-        response = await supabaseAdmin
+        response = await supabaseServerClient({ req, res })
           .rpc('get_all_category_data', {
             startingdate: req.body.startingDate,
             endingdate: req.body.endingDate,
-            isdemo: true
+            isdemo: false
           })
           .order('total', { ascending: req.body.sumAscending });
+
+        // response = await supabaseServerClient({ req, res })
+        //   .from('categories')
+        //   .select('name, id, income_or_expense, transactions(id, amount)', {
+        //     count: 'exact'
+        //   });
         break;
 
       case 'get_all_category_names':
-        response = await supabaseAdmin
+        response = await supabaseServerClient({ req, res })
           .from('categories')
-          .select('id, name, income_or_expense')
-          .eq('ispublic', true);
+          .select('id, name, income_or_expense');
         break;
 
       default:
-        response = await supabaseAdmin
+        response = await supabaseServerClient({ req, res })
           .from('transactions')
           .select(
             'amount, created_at, id, income_or_expense, categories!inner(*)',
@@ -46,7 +58,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               count: 'exact'
             }
           )
-          .eq('ispublic', true)
           .eq('categories.id', req.body.categoryId)
           .lte('created_at', req.body.endingDate)
           .gte('created_at', req.body.startingDate)
@@ -54,6 +65,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .range(0, 9);
     }
 
+    console.log(response);
     if (response.error) {
       throw response.error;
     }
@@ -63,6 +75,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log(err);
     res.status(500);
   }
-};
-
-export default handler;
+});

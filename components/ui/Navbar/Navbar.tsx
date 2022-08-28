@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import s from './Navbar.module.css';
 
-import Logo from 'components/icons/Logo';
+import Plus from 'components/icons/Plus';
+import User from 'components/icons/User';
+import Home from 'components/icons/Home';
+import Settings from 'components/icons/Settings';
 import { useUser } from 'utils/useUser';
 import { useRouter } from 'next/router';
 
@@ -11,39 +14,50 @@ const Navbar = () => {
 
   return (
     <nav className="fixed bg-black w-full bottom-0">
-      <a href="#skip" className="sr-only focus:not-sr-only">
-        Skip to content
-      </a>
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex justify-between align-center flex-row py-4 md:py-6 relative">
-          <div className="flex flex-1 items-center">
-            <Link href="/">
-              <a className={s.logo} aria-label="Logo">
-                <Logo />
-              </a>
-            </Link>
-            <nav className="flex-1 space-x-2 ml-6">
-              <Link href="/demo">
-                <a className={s.link}>Demo</a>
-              </Link>
-              <Link href="/account">
-                <a className={s.link}>Account</a>
-              </Link>
-              <Link href="/create-transaction">
-                <a className={s.link}>New Transaction</a>
-              </Link>
-              {user ? (
-                <Link href="/api/auth/logout">
-                  <a className={s.link}>Sign out</a>
-                </Link>
-              ) : (
-                <Link href="/signin">
-                  <a className={s.link}>Sign in</a>
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
+      <div className="flex justify-around items-center mx-auto max-w-6xl p-2">
+        <Link href="/create-transaction">
+          <a className={s.logo} aria-label="Create Transaction">
+            <div className="flex flex-col items-center">
+              <div className="relative border p-2 rounded-full bg-green-200 text-black">
+                <Plus />
+              </div>
+              <i className="text-sm">New Transaction</i>
+            </div>
+          </a>
+        </Link>
+        <Link href="/dashboard">
+          <a>
+            <div className="flex flex-col items-center">
+              <div className=" p-2">
+                <Home />
+              </div>
+              <i className="text-xs">Dashboard</i>
+            </div>
+          </a>
+        </Link>
+        {user ? (
+          <Link href="account">
+            <a>
+              <div className="flex flex-col items-center">
+                <div className=" p-2">
+                  <Settings />
+                </div>
+                <i className="text-xs">Settings</i>
+              </div>
+            </a>
+          </Link>
+        ) : (
+          <Link href="/signin">
+            <a>
+              <div className="flex flex-col items-center">
+                <div className=" p-2">
+                  <User />
+                </div>
+                <i className="text-xs">Sign In</i>
+              </div>
+            </a>
+          </Link>
+        )}
       </div>
     </nav>
   );

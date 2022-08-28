@@ -5,7 +5,6 @@ import {
 } from '@supabase/supabase-auth-helpers/react';
 import { UserDetails } from 'types';
 import { SupabaseClient } from '@supabase/supabase-auth-helpers/nextjs';
-import { postData } from 'utils/helpers';
 import { updateUserName as updateUsernameDB } from 'utils/supabase-client';
 
 type UserContextType = {
