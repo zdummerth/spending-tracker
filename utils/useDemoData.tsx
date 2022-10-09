@@ -35,7 +35,7 @@ export default function useDemoData({
         ]
       : null,
     async () => {
-      console.log('data url: ', url);
+      // console.log('data url: ', url);
 
       const response = await fetch(url, {
         method: 'POST',

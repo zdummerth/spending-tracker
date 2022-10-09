@@ -20,7 +20,12 @@ const AppStateContext = React.createContext<AppContextType | undefined>(
 
 export const AppStateContextProvider = ({ children }: { children: any }) => {
   const getPreviousSunday = (date = new Date()) =>
-    new Date(date.getDate() - date.getDay());
+    // new Date(date.getDate() - date.getDay());
+    new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - date.getDay()
+    );
 
   const getFirstOfMonth = (date = new Date()) =>
     new Date(date.getFullYear(), date.getMonth(), 1);
@@ -37,6 +42,8 @@ export const AppStateContextProvider = ({ children }: { children: any }) => {
     startingDate: getPreviousSunday(now),
     currentDateRange: 'this-week'
   });
+
+  // console.log(getPreviousSunday(new Date()));
 
   const dateRangeDispatch = (range: string) => {
     const dateFunction = (func: any, range: string) =>
